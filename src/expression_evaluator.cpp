@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "tokens.h"
+#include "lexer.cpp"
 
 using namespace std;
 

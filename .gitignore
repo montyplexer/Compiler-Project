@@ -26,3 +26,13 @@
 *.exe
 *.out
 *.app
+
+# CMake Generated files
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+
+# VS Code Generated files
+.vscode/
+
