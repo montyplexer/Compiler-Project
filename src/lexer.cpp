@@ -26,19 +26,59 @@ void Lexer::set_text(std::string text) {
     _end_of_file = false;
 }
 
-/* Next token will generate either a...
- * - TOKEN_IDENTIFIER
- * - TOKEN_OPERATOR
- * - TOKEN_LITERAL
- * - TOKEN_KEYWORD
+/* Next token will create a new token based on the current position in the following order...
+ * - TOKEN_EOF
  * - TOKEN_PUNCTUAL
+ * - TOKEN_OPERATOR
+ * - TOKEN_KEYWORD and TOKEN_LITERAL_BOOLEAN
+ * - TOKEN_IDENTIFIER
+ * - TOKEN_LITERAL_INTEGER
+ * - TOKEN_LITERAL_FLOAT
+ * - TOKEN_LITERAL_CHARACTER
+ * - TOKEN_LITERAL_STRING
+ * - TOKEN_INVALID
  */
 token_t Lexer::next_token() {
 
-    //printf("HERE ");
+    /* Ignore whitespace (don't make whitespace tokens) */
+    while (std::isspace(_current())) {
+        _next();
+    }
 
     /* Placeholder token will be filled with the appropriate kind of token */
     token_t token = { TOKEN_PLACEHOLDER, _position, std::string()};
+
+    /* Single-line Comments */
+    if (_current() == '#') {
+        while (!(_current() == '\n')) { 
+            _next();
+            if (_position >= _text.length()) {
+                token.kind = TOKEN_EOF;
+                _end_of_file = true;
+                return token;
+            }
+        }
+    }
+
+    /* Multi-line Comments */
+    if (_text.substr(_position,2) == "/*") {
+        _seekn(2);
+        while (_text.substr(_position,2) != "*/") { 
+            if (_position+2 >= _text.length()) {
+                token.kind = TOKEN_EOF;
+                _end_of_file = true;
+                return token;
+            }
+            _next();
+        }
+        _seekn(2);
+
+    }
+
+    /* Ignore whitespace (don't make whitespace tokens) */
+    while (std::isspace(_current())) {
+        _next();
+    }
 
     /* END OF FILE */
     if (_position >= _text.length()) {
@@ -47,26 +87,25 @@ token_t Lexer::next_token() {
         return token;
     }
 
-    /* Ignore whitespace (don't make whitespace tokens) */
-    while (std::isspace(_current())) {
-        _next();
-    }
-
     /* PUNCTUALS */
-    if (_current() == ';' || _current() == '(' || _current() == ')') {
-        token.kind = TOKEN_PUNCTUAL;
-        token.value = _current();
-        return token;
+    std::vector<char> punctuals_list = { '(', ')', '{', '}', '[', ']', ','};
+    for (char punctual : punctuals_list) {
+        if (_current() == punctual) {
+            token.kind = TOKEN_PUNCTUAL;
+            token.value = punctual;
+            _next();
+            return token;
+        }
     }
 
     /* OPERATORS */
     // Note the order of the list is important. Longest operators are handled first.
 
-    /* Logic operators*/
+    /* Logic and Bitwise operators*/
     std::vector<std::string> logic_operators_list = {"<->", // 3 char long
-                                                "&&", "||", "^^", "!&", "!|", "->", // 2 char long
-                                                "!", // 1 char long
-                                                };
+                                                     "&&", "||", "^^", "~&", "~|", "->", "<<", ">>", // 2 char long
+                                                     "~", // 1 char long
+                                                    };
     for (std::string opword : logic_operators_list) {
         token = _form_operator_token(opword);
         if (token.kind != TOKEN_PLACEHOLDER) {
@@ -75,9 +114,8 @@ token_t Lexer::next_token() {
     }
 
     /* Arithmetic operators */
-    std::vector<std::string> arithmetic_operators_list = {"<<", ">>", // 2 char long
-                                                     "+", "-", "*", "/", "%", "^" // 1 char long
-                                                    };
+    std::vector<std::string> arithmetic_operators_list = {"+", "-", "*", "/", "%", "^" // 1 char long
+                                                         };
     for (std::string opword : arithmetic_operators_list) {
         token = _form_operator_token(opword);
         if (token.kind != TOKEN_PLACEHOLDER) {
@@ -86,9 +124,9 @@ token_t Lexer::next_token() {
     }
 
     /* Comparison operators */
-    std::vector<std::string> comparison_operators_list = {"==", "!=", "<=", ">=", // 2 char long
-                                                     "<", ">" // 1 char long
-                                                     };
+    std::vector<std::string> comparison_operators_list = {"==", "~=", "<=", ">=", // 2 char long
+                                                          "<", ">" // 1 char long
+                                                         };
     for (std::string opword : comparison_operators_list) {
         token = _form_operator_token(opword);
         if (token.kind != TOKEN_PLACEHOLDER) {
@@ -99,12 +137,11 @@ token_t Lexer::next_token() {
     /* Keywords */
     // TODO: make separate tokens for type declaration (we need to account for pointers and mutability with '*' and '!')
     std::vector<std::string> keyword_list = { "true", "false", // boolean literals (not being treated like keywords)
-                                         "if", "else", // control flow
-                                         "int", "i8", "i16", "i32", "i64", // integer declaration
-                                         "uns", "u8", "u16", "u32", "u64", // unsigned integer declaration
-                                         "flt", "f8", "f16", "f32", "f64", // float declaration
-                                         };
-    
+                                              "if", "else", // control flow
+                                              "int", "i8", "i16", "i32", "i64", // integer declaration
+                                              "uns", "u8", "u16", "u32", "u64", // unsigned integer declaration
+                                              "flt", "f8", "f16", "f32", "f64", // float declaration
+                                            };
     for (std::string keyword : keyword_list) {
         token = _form_keyword_token(keyword);
         if (token.kind != TOKEN_PLACEHOLDER) {
@@ -170,14 +207,51 @@ token_t Lexer::next_token() {
         // Skip over period
         _next();
         // Continue until end of fractional number
-        while (std::isdigit(_current())) {
-            _next();
-        }
+        while (std::isdigit(_current())) { _next(); }
         token.kind = TOKEN_LITERAL_FLOAT;
         token.value = _text.substr(start,_position-start);
         return token;
     }
-    
+
+    /* Character Literals */
+    // Found opening quotation
+    if (_current() == '\'') {
+        // Record current position
+        int start = _position;
+        // Continue until closing quotation
+        _next();
+        while (!(_current() == '\'')) { 
+            _next(); 
+            if (_position >= _text.length()) {
+                token.kind = TOKEN_INVALID;
+                return token;
+            }
+        }
+        _next();
+        token.kind = TOKEN_LITERAL_CHARACTER;
+        token.value = _text.substr(start+1,_position-start-2);
+        return token;
+    }
+
+    /* String Literals */
+    // Found opening quotation
+    if (_current() == '"') {
+        // Record current position
+        int start = _position;
+        // Continue until closing quotation
+        _next();
+        while (!(_current() == '"')) { 
+            _next();
+            if (_position >= _text.length()) {
+                token.kind = TOKEN_INVALID;
+                return token;
+            }
+        }
+        _next();
+        token.kind = TOKEN_LITERAL_STRING;
+        token.value = _text.substr(start+1,_position-start-2);
+        return token;
+    }
 
     /* Something went wrong! */
     token.kind = TOKEN_INVALID;
@@ -200,7 +274,7 @@ char Lexer::_peek() {
 
 char Lexer::_peekn(int n) {
     if (_position+n >= _text.length() || _position+n < 0) { return '\0'; }
-    else return _text[_position+n];
+    else return _text.at(_position+n);
 }
 
 void Lexer::_next() { _position++; }
@@ -235,9 +309,8 @@ token_t Lexer::_form_keyword_token(std::string keyword) {
 token_t Lexer::_form_operator_token(std::string opword) {
     token_t token = { TOKEN_PLACEHOLDER, _position, std::string() };
     char end_char = _peekn(opword.length());
-    // Check that substring actually matches keyword, AND it is followed by whitespace, an alphanumerical, paranthesis or underscore character
-    if (_text.substr(_position,opword.length()) == opword && 
-        (std::isalnum(end_char) || std::isspace(end_char) || end_char == '_' || end_char == '(' || end_char == ')')) {
+    // Check that substring actually matches keyword          //, AND it is followed by whitespace, an alphanumerical, paranthesis or underscore character
+    if (_text.substr(_position,opword.length()) == opword ) { //(std::isalnum(end_char) || std::isspace(end_char) || end_char == '_' || end_char == '(' || end_char == ')' || end_char == 0
         token.kind = TOKEN_OPERATOR;
         token.value = _text.substr(_position,opword.length());
         _seekn(opword.length());
@@ -246,4 +319,3 @@ token_t Lexer::_form_operator_token(std::string opword) {
 }
 
 // TODO: token_t Lexer::_form_type_declaration_token(std::string typeword) {}
-
