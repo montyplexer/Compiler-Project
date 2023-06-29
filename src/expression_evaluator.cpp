@@ -10,6 +10,7 @@ int main (int argc, char* argv[]) {
     bool is_running = true;
     string user_input;
     cout << "Entered basic expression evaluator." << endl;
+    Lexer lexer = Lexer();
 
     while (is_running) {
         /* Query user */
@@ -17,7 +18,10 @@ int main (int argc, char* argv[]) {
         getline(cin,user_input);
         
         /* Do stuff */
-        cout << user_input;
+        lexer.set_text(user_input);
+        while (lexer.is_lexing()) {
+            cout << Lexer::print_token(lexer.next_token()) << " ";
+        }
         cout << endl;
 
         /* Exit */
