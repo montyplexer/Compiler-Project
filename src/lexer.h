@@ -29,7 +29,6 @@ public :
     token_t next_token();
     /* Print out contents of a token made by the Lexer */
     static std::string print_token(token_t token);
-
     /* Returns the state of the Lexer (whether it is still lexing) */
     bool is_lexing();
 
@@ -62,7 +61,6 @@ private :
     /* Utility function to check for a given operator at current position
      * If forming the operator fails, the function returns a placeholder token. */
     token_t _form_operator_token(std::string opword);
-
     // TODO: token_t _form_type_declaration_token(std::string typeword);
 };
 

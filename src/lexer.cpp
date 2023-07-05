@@ -99,40 +99,66 @@ token_t Lexer::next_token() {
     }
 
     /* OPERATORS */
-    // Note the order of the list is important. Longest operators are handled first.
+    /* Note the order of the list is important. Longest operators are handled first.
+     * There are several types of operators:
+     * ARITHMETIC       - Mathematical operators for working with integers and floats.
+     * LOGIC & BITWISE  - Digital logic operators for working with Booleans. When used with integers, performs equivalent bitwise operations.
+     * COMPARISON       - Equality and inequality operators for working with any built-in types.
+     * ASSIGMENT        - Operators for declaration and modification of variables.
+     * OTHER            - Miscellaneous operators
+     */
+    std::vector<std::string> operators_list = 
+    {
+        
+        // 3 char long
+        "<<=", // ASSIGMENT - BITWISE LEFT SHIFT ASSIGN
+        ">>=", // ASSIGMENT - BITWISE RIGHT SHIFT ASSIGN
+        "<->", // COMPARISON - IFF "If and only if": <bln_expr> IFF(<bln_expr>,<bln_expr>)
+        
+        // 2 char long
+        "+=", // ASSIGNMENT - ADDITION ASSIGN
+        "-=", // ASSIGNMENT - SUBTRACTION ASSIGN
+        "*=", // ASSIGNMENT - MULTIPLICATION ASSIGN
+        "/=", // ASSIGNMENT - DIVISION ASSIGN
+        "%=", // ASSIGNMENT - REMAINDER ASSIGN
+        "|=", // ASSIGNMENT - AND ASSIGN
+        "|=", // ASSIGNMENT - OR ASSIGN
+        "^=", // ASSIGNMENT - XOR ASSIGN
+        "==", // COMPAIRSON - EQUALITY
+        "~=", // COMPAIRSON - INEQUALITY
+        "<=", // COMPAIRSON - LESS THAN OR EQUAL
+        ">=", // COMPAIRSON - GREATER THAN OR EQUAL
+        "&&", // LOGIC & BITWISE - AND
+        "||", // LOGIC & BITWISE - OR
+        "^^", // LOGIC & BITWISE - XOR
+        "~&", // LOGIC & BITWISE - NAND
+        "~|", // LOGIC & BITWISE - NOR
+        "->", // LOGIC & BITWISE - IF
+        "<<", // LOGIC & BITWISE - BITWISE LEFT SHIFT 
+        ">>", // LOGIC & BITWISE - BITWISE RIGHT SHIFT
+        
+        // 1 char long
+        "=", // ASSIGNMENT - SIMPLE ASSIGN
+        "+", // ARITHMETIC - ADDITION
+        "-", // ARITHMETIC - SUBTRACTION
+        "*", // ARITHMETIC - MULTIPLICATION
+        "/", // ARITHMETIC - DIVISION
+        "%", // ARITHMETIC - MODULO/REMAINDER
+        "^", // ARITHMETIC - EXPONENTIATION
+        "<", // COMPARISON - LESS THAN
+        ">", // COMPARISON - MORE THAN
+        "!", // OTHER - MUTABILITY INDICATOR
+        "~", // LOGIC & BITWISE - NOT
 
-    /* Logic and Bitwise operators*/
-    std::vector<std::string> logic_operators_list = {"<->", // 3 char long
-                                                     "&&", "||", "^^", "~&", "~|", "->", "<<", ">>", // 2 char long
-                                                     "~", // 1 char long
-                                                    };
-    for (std::string opword : logic_operators_list) {
+    };
+    for (std::string opword : operators_list) {
         token = _form_operator_token(opword);
         if (token.kind != TOKEN_PLACEHOLDER) {
             return token;
         }
     }
 
-    /* Arithmetic operators */
-    std::vector<std::string> arithmetic_operators_list = {"+", "-", "*", "/", "%", "^" // 1 char long
-                                                         };
-    for (std::string opword : arithmetic_operators_list) {
-        token = _form_operator_token(opword);
-        if (token.kind != TOKEN_PLACEHOLDER) {
-            return token;
-        }
-    }
-
-    /* Comparison operators */
-    std::vector<std::string> comparison_operators_list = {"==", "~=", "<=", ">=", // 2 char long
-                                                          "<", ">" // 1 char long
-                                                         };
-    for (std::string opword : comparison_operators_list) {
-        token = _form_operator_token(opword);
-        if (token.kind != TOKEN_PLACEHOLDER) {
-            return token;
-        }
-    }
+    
 
     /* Keywords */
     // TODO: make separate tokens for type declaration (we need to account for pointers and mutability with '*' and '!')
