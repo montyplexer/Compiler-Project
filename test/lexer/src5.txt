@@ -1,0 +1,24 @@
+/* 1 char long */
+=                           # ASSIGNMENT
++ - * / % ^                 # ARITHMETIC
+< >                         # COMPARISON
+!                           # OTHER
+~                           # LOGIC & BITWISE
+
+/* 2 char long */
++= -= *= /= %= &= |= ^=     # ASSIGNMENT
+== ~= <= >=                 # COMPARISON
+&& || ^^ ~& ~| -> << >>     # LOGIC & BITWISE
+                 
+/* 2 char long */
+<<= >>=                     # ASSIGNMENT
+<->                         # LOGIC & BITWISE
+
+
+# All of these should be ignore since it's in a comment
+# = + - * / % ^ < > ! ~
+# =+-*/%^<>!~
+# <<= >>= <->
+
+/* Same with these */
+/*+= -= *= /= %= &= |= ^= == ~= <= >= && || ^^ ~& ~| -> << >>*/

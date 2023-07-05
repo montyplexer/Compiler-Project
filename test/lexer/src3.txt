@@ -1,0 +1,6 @@
+/* This file tests multi-line comments */
+
+/* Here's another comment */ /*another */   /* one more*/  /*surprise*/
+
+/* yup */
+

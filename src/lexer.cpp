@@ -32,45 +32,43 @@ void Lexer::set_text(std::string text) {
  */
 token_t Lexer::next_token() {
 
-    /* Ignore whitespace (don't make whitespace tokens) */
-    while (std::isspace(_current())) {
-        _next();
-    }
-
     /* Placeholder token will be filled with the appropriate kind of token */
     token_t token = { TOKEN_PLACEHOLDER, _position, std::string()};
 
-    /* Single-line Comments */
-    if (_current() == '#') {
-        while (!(_current() == '\n')) { 
-            _next();
-            if (_position >= _text.length()) {
-                token.kind = TOKEN_EOF;
-                _end_of_file = true;
-                return token;
-            }
-        }
-    }
-
-    /* Multi-line Comments */
-    if (_text.substr(_position,2) == "/*") {
-        _seekn(2);
-        while (_text.substr(_position,2) != "*/") { 
-            if (_position+2 >= _text.length()) {
-                token.kind = TOKEN_EOF;
-                _end_of_file = true;
-                return token;
-            }
+    /* This language ignores comments and whitespace tokens */
+    while (std::isspace(_current()) || _current() == '#' || _text.substr(_position,2) == "/*") {
+        /* Ignore whitespace (don't make whitespace tokens) */
+        while (std::isspace(_current())) {
             _next();
         }
-        _seekn(2);
 
-    }
+        /* Single-line Comments */
+        if (_current() == '#') {
+            while (!(_current() == '\n')) { 
+                _next();
+                if (_position >= _text.length()) {
+                    token.kind = TOKEN_EOF;
+                    _end_of_file = true;
+                    return token;
+                }
+            }
+        }
 
-    /* Ignore whitespace (don't make whitespace tokens) */
-    while (std::isspace(_current())) {
-        _next();
-    }
+        /* Multi-line Comments */
+        if (_text.substr(_position,2) == "/*") {
+            _seekn(2);
+            while (_text.substr(_position,2) != "*/") { 
+                if (_position+2 >= _text.length()) {
+                    token.kind = TOKEN_EOF;
+                    _end_of_file = true;
+                    return token;
+                }
+                _next();
+            }
+            _seekn(2);
+        }
+
+    }    
 
     /* END OF FILE */
     if (_position >= _text.length()) {
@@ -113,7 +111,7 @@ token_t Lexer::next_token() {
         "*=", // ASSIGNMENT - MULTIPLICATION ASSIGN
         "/=", // ASSIGNMENT - DIVISION ASSIGN
         "%=", // ASSIGNMENT - REMAINDER ASSIGN
-        "|=", // ASSIGNMENT - AND ASSIGN
+        "&=", // ASSIGNMENT - AND ASSIGN
         "|=", // ASSIGNMENT - OR ASSIGN
         "^=", // ASSIGNMENT - XOR ASSIGN
         "==", // COMPAIRSON - EQUALITY

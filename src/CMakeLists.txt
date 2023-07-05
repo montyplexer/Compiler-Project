@@ -1,23 +1,21 @@
 add_library(compiler_src
     
-    # Main
-    expression_evaluator.cpp
-    
     # Token Struct and Enum
     tokens.h
 
     # Lexer Phase
     lexer.h
-    lexer.cpp
+
 
     # Syntax Node Struct and Enum
     syntax_nodes.h
 
     # Parser Phase
     parser.h
-    parser.cpp
 
     )
+
+set_target_properties(compiler_src PROPERTIES LINKER_LANGUAGE CXX)
 
 install(
     TARGETS compiler_src

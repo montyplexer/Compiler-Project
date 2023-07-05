@@ -20,4 +20,10 @@ rm "exe/cmake_install.cmake"
 rm "exe/Makefile"
 rm exe/*.exe
 
+# Remove cache and exe's in ./test
+rm -r "test/CMakeFiles"
+rm "test/cmake_install.cmake"
+rm "test/Makefile"
+rm test/lexer/*.exe
+
 echo "Done!"

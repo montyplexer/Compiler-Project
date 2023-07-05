@@ -5,10 +5,8 @@ set(CMAKE_CXX_STANDARD 14)
 # Source files
 add_subdirectory(src)
 add_subdirectory(exe)
+add_subdirectory(test)
 
-if(EXISTS ${PROJECT_SOURCE_DIR}/test)
-    add_subdirectory(test)
-endif(EXISTS ${PROJECT_SOURCE_DIR}/test)
 
 
 
