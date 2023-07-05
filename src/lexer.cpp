@@ -6,17 +6,9 @@
 #include "tokens.h"
 
 /* CONSTRUCTORS */
-Lexer::Lexer() {
-    _text = "";
-    _position = 0;
-    _end_of_file = false;
-}
+Lexer::Lexer() { set_text( std::string() ); }
 
-Lexer::Lexer(std::string text) {
-    _text = text;
-    _position = 0;
-    _end_of_file = false;
-}
+Lexer::Lexer(std::string text) { set_text( text ); }
 
 /* PUBLIC FUNCTIONS */
 

@@ -8,6 +8,7 @@
  * @author Monty
  */
 
+/* These are the kinds of tokens that the lexer can produce. */
 enum token_kind {
     TOKEN_PLACEHOLDER,
     TOKEN_KEYWORD,
@@ -43,7 +44,7 @@ std::string print_token_kind(token_kind kind) {
     }
 }
 
-/* Represents a "word" in our language. 
+/* A token represents a "word" in our language. 
  * Essentially, a unit of meaning.
  */
 typedef struct token_t {

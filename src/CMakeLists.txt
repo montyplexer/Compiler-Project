@@ -10,6 +10,13 @@ add_library(compiler_src
     lexer.h
     lexer.cpp
 
+    # Syntax Node Struct and Enum
+    syntax_nodes.h
+
+    # Parser Phase
+    parser.h
+    parser.cpp
+
     )
 
 install(

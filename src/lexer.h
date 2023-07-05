@@ -1,14 +1,14 @@
 #ifndef LEXER_H
 #define LEXER_H
 
+#include <string>
+#include "tokens.h"
+
 /* The lexer/tokenizer is the first phase of a compiler. It's purpose is to derived the smallest units of meaning from the source code.
  * It is also called the scanner because it traverses the source code line-by-line, creating tokens for the next phase, the parser.
  *
  * @author Monty
  */
-
-#include <string>
-#include "tokens.h"
 
 class Lexer {
 
@@ -55,6 +55,7 @@ private :
     char _peekn(int n);
     /* Move position over by n */
     void _seekn(int n);
+
     /* Utility function to check for a given keyword at current position
      * If forming the keyword fails, the function returns a placeholder token. */
     token_t _form_keyword_token(std::string keyword);
