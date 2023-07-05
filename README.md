@@ -1,5 +1,27 @@
  # Compiler written in C++ for new language
 
-At the moment, a basic expression evaluator is being worked on. The Lexer is being implemented.
+There a multiple phases of a compiler. In this project, I seek to break down the compiler into seperate modules that include:
+1. Lexer/Scanner/Tokenizer (Lexical Analysis)
+2. Parser (Syntax And Semantic Analysis)
+3. Intermediate Code Generator 
+4. Code Optimizer
+5. Target Code Generator
 
-Currently, the Lexer is able to tokenize arithmetic, logic, and comparison operators, as well as punctuals, keywords, identifiers, and numeral literals (distinguishing between integers and floats). There is more to come.
+The exact division of the phases is subject to change based on implementation. As of now, the lexer is essentially complete (but may change as the language evolves), however, the lexer still needs to be unit-tested.
+
+To build the code, download the repo, and from the main folder run `./build.sh`. This will build the project using CMake. Feel free to remove CMake leftovers, like caches, using `./clean.sh`.
+
+To build and launch the expression evaluator, enter `./run.sh`. If you only want to launch the expression evaluator, run `exe/expr_eval.exe`.
+
+__TODO__
+- [ ] Lexer 
+    - [x] Implementation of key token types: operators, keywords, punctuals, identifiers, various literals
+    - [x] Ignore whitespace and single- and multi-line comments
+    - [x] Generate list of tokens for parser
+    - [ ] Write unit tests for lexer that tests for correct token generation using 'source code' files
+- [ ] Parser
+    - [ ] Decide on type of parser to implement (most likely bottom-to-top, like SLR)
+    - [ ] Implementation of key syntax node types
+- [ ] Intermediate code generation
+- [ ] Code optimizer
+- [ ] Target code generation
