@@ -6,7 +6,6 @@ add_library(compiler_src
     # Lexer Phase
     lexer.h
 
-
     # Syntax Node Struct and Enum
     syntax_nodes.h
 

@@ -48,8 +48,14 @@ std::string print_token_kind(token_kind kind) {
  * Essentially, a unit of meaning.
  */
 typedef struct token_t {
+    // Kind of token, distinguishable at Lexer phase
     token_kind kind;
+    // Overall position in file
     int position;
+    // The location of the token's first associated char (left-to-right, top-to-bottom)
+    // Useful for giving feedback if there is a syntax error
+    int row, col;
+    // The substring associated with the token (variable length, therefore it's the last field)
     std::string value;
 };
 

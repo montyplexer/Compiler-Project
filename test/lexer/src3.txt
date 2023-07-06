@@ -4,3 +4,9 @@
 
 /* yup */
 
+/* this one is 
+is split across multiple lines */
+
+/* here's another example
+ * of that
+ */

@@ -1,0 +1,38 @@
+/* This is a sample program, likely similar to what the language will look like in the end */ 
+/* It assumes certain words are keywords, i.e. "int" */
+
+
+/* In this file, we are assuming the language will be very C-like in its look.
+ * Note that the declaration of a variable without "!" after its type 
+ * indicates immutability of that variable. 
+ */
+int main() {
+    int operand_1 = 500;
+    int operand_2 = 2;
+    
+    int result = add(operand_1,operand_2);
+    
+}
+
+int add(int a, int b) {
+    give a+b;
+}
+
+/* Some possible alternatives to give (i.e. could use a symbol instead of keyword)
+int add(int a, int b) {
+    return a+b;
+}
+
+int add(int a, int b) {
+    < a+b >;
+}
+
+int add(int a, int b) {
+    <a+b>;
+}
+
+int add(int a, int b) {
+    int c = 4;
+    give a+b;
+}
+*/

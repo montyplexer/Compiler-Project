@@ -16,6 +16,7 @@ int main (int argc, char* argv[]) {
     ofstream output_file; string output_file_name;
     Lexer lexer = Lexer();
     string line = string();
+    string source_text = string();
     //vector<token_t> tokens = vector<token_t>();
 
     if (argc != 2) {
@@ -42,24 +43,23 @@ int main (int argc, char* argv[]) {
         exit(1);
     }
     
-    token_t token = {TOKEN_EOF, 0, string()};
-    // Begin scanning, line-by-line
+    token_t token = {TOKEN_EOF, 0, 0, 0, string()};
+
+    // Collect source file, line-by-line
     while (getline(source_file, line)) {
-        lexer.set_text(line);
+        source_text.append(line + '\n');
+        cout << line;
+    }
+
+    // Begin scanning
+    lexer.set_text(source_text);
         while(lexer.is_lexing()) {
             token_t token = lexer.next_token();
-            if (token.kind != TOKEN_EOF) {
-                output_file << Lexer::print_token(token) << endl;
-            }
+            output_file << Lexer::print_token(token) << endl;
         }
-    }
-    // Only capture last EOF token 
-    output_file << Lexer::print_token(token) << endl;
     
     cout << "Closing files..." << endl;
     source_file.close();
     output_file.close();
     cout << "Done!" << endl;
-
-
 }

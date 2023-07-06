@@ -1,7 +1,7 @@
-<0:INTEGER:1>
-<2:FLOAT:1.0>
-<6:CHARACTER:c>
-<10:STRING:string>
-<19:BOOLEAN:false>
-<25:BOOLEAN:true>
-<0:EOF>
+<0:INTEGER:1:r0c0>
+<2:FLOAT:1.0:r0c2>
+<6:CHARACTER:c:r0c6>
+<10:STRING:string:r0c10>
+<19:BOOLEAN:false:r0c19>
+<25:BOOLEAN:true:r0c25>
+<30:EOF>

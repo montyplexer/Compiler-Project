@@ -42,6 +42,9 @@ private :
     int _position;
     /* Is at end of text? */
     int _end_of_file = false;
+    /* Current two dimensional position in the file */
+    int _row = 0;
+    int _col = 0;
 
     /* PRIVATE FUNCTIONS */
 
@@ -63,6 +66,9 @@ private :
      * If forming the operator fails, the function returns a placeholder token. */
     token_t _form_operator_token(std::string opword);
     // TODO: token_t _form_type_declaration_token(std::string typeword);
+
+    /* Called when encountering a new line. Resets column to 0 and increments row. */
+    void _return_carriage();
 };
 
 #endif
