@@ -1,0 +1,10 @@
+/* An example function that calculates the factorial of an integer equal to or greater than zero.
+ * @param n unsigned integer, since factorial of a negative number is not defined. 
+ */
+uns calculate_factorial(uns n) {
+    if (n < 2) {
+        give 1;
+    } else {
+        give n * calculate_factorial(n-1);
+    }
+} 

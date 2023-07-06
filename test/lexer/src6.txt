@@ -10,6 +10,7 @@ int main() {
     int operand_1 = 500;
     int operand_2 = 2;
     
+    # Let's just add them...
     int result = add(operand_1,operand_2);
     
 }

@@ -9,7 +9,7 @@
 # Test 4 - Empty files should produce just one token of type EOF
 # Test 5 - Test that all operators show up as valid operator tokens, and that operator symbols are ignored in comments
 
-num_of_tests=5
+num_of_tests=7
 
 for ((i = 1; i <= $num_of_tests; i++)) do
     echo "Test ${i}"

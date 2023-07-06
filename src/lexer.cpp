@@ -79,7 +79,7 @@ token_t Lexer::next_token() {
     token.row = _row; token.col = _col;
 
     /* PUNCTUALS */
-    std::vector<char> punctuals_list = { '(', ')', '{', '}', '[', ']', ','};
+    std::vector<char> punctuals_list = { '(', ')', '{', '}', '[', ']', ',', ';'};
     for (char punctual : punctuals_list) {
         if (_current() == punctual) {
             token.kind = TOKEN_PUNCTUAL;
@@ -152,6 +152,7 @@ token_t Lexer::next_token() {
     std::vector<std::string> keyword_list = { 
         "true", "false", // boolean literals (not being treated like keywords)
         "if", "else", // control flow
+        "give", // return value
         "int", "i8", "i16", "i32", "i64", // integer declaration
         "uns", "u8", "u16", "u32", "u64", // unsigned integer declaration
         "flt", "f8", "f16", "f32", "f64", // float declaration
