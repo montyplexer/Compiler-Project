@@ -37,14 +37,14 @@ token_t Lexer::next_token() {
     /* Placeholder token will be filled with the appropriate kind of token */
     token_t token = { TOKEN_PLACEHOLDER, _position, _row, _col, std::string()};
     
-    std::cout << "r" << std::to_string(_row) << "c" << std::to_string(_col) << std::endl;
+    //std::cout << "r" << std::to_string(_row) << "c" << std::to_string(_col) << _text[_position] << "(before)" << std::endl;
 
     /* This language ignores comments and whitespace tokens */
     while (std::isspace(_current()) || _current() == '#' || _text.substr(_position,2) == "/*") {
         /* Ignore whitespace (don't make whitespace tokens) */
         while (std::isspace(_current())) {
             _next();
-            
+
         }
 
         /* Single-line Comments */
@@ -75,6 +75,9 @@ token_t Lexer::next_token() {
 
     }    
 
+    //std::cout << "r" << std::to_string(_row) << "c" << std::to_string(_col) << " (after)" << std::endl;
+    token.row = _row; token.col = _col;
+
     /* PUNCTUALS */
     std::vector<char> punctuals_list = { '(', ')', '{', '}', '[', ']', ','};
     for (char punctual : punctuals_list) {
@@ -97,7 +100,6 @@ token_t Lexer::next_token() {
      */
     std::vector<std::string> operators_list = 
     {
-        
         // 3 char long
         "<<=", // ASSIGMENT - BITWISE LEFT SHIFT ASSIGN
         ">>=", // ASSIGMENT - BITWISE RIGHT SHIFT ASSIGN
@@ -137,7 +139,6 @@ token_t Lexer::next_token() {
         ">", // COMPARISON - MORE THAN
         "!", // OTHER - MUTABILITY INDICATOR
         "~", // LOGIC & BITWISE - NOT
-
     };
     for (std::string opword : operators_list) {
         token = _form_operator_token(opword);
@@ -148,12 +149,13 @@ token_t Lexer::next_token() {
 
     /* Keywords */
     // TODO: make separate tokens for type declaration (we need to account for pointers and mutability with '*' and '!')
-    std::vector<std::string> keyword_list = { "true", "false", // boolean literals (not being treated like keywords)
-                                              "if", "else", // control flow
-                                              "int", "i8", "i16", "i32", "i64", // integer declaration
-                                              "uns", "u8", "u16", "u32", "u64", // unsigned integer declaration
-                                              "flt", "f8", "f16", "f32", "f64", // float declaration
-                                            };
+    std::vector<std::string> keyword_list = { 
+        "true", "false", // boolean literals (not being treated like keywords)
+        "if", "else", // control flow
+        "int", "i8", "i16", "i32", "i64", // integer declaration
+        "uns", "u8", "u16", "u32", "u64", // unsigned integer declaration
+        "flt", "f8", "f16", "f32", "f64", // float declaration
+    };
     for (std::string keyword : keyword_list) {
         token = _form_keyword_token(keyword);
         if (token.kind != TOKEN_PLACEHOLDER) {
@@ -164,7 +166,7 @@ token_t Lexer::next_token() {
 
     /* Identifiers */
     // REGEX: /(?<!\S)([A-Z]|[a-z]|[_])+([A-Z]|[a-z]|[_]|[0-9])*(?!\S)*/
-    if (std::isalpha(_current()) || _current() == '_') {
+    if ( std::isalpha(_current()) || _current() == '_' ) {
         int start = _position;
         while (std::isalpha(_current()) ||
                std::isdigit(_current()) ||
@@ -296,9 +298,15 @@ char Lexer::_peekn(int n) {
 }
 
 void Lexer::_next() { 
+    if ( _current() == '\n' ) { 
+        _return_carriage(); 
+        //std::cout << "current char '" << _text[_position] << "' (if)" << std::endl;
+    }
+    else { 
+        //std::cout << "current char '" << _text[_position] << "' (else)" << std::endl; 
+        _col++; 
+    }
     _position++;
-    if(_peek() == '\n') { _return_carriage(); }
-    else { _col++; }
 }
 
 void Lexer::_seekn(int n) { 
@@ -310,17 +318,23 @@ void Lexer::_seekn(int n) {
 }
 
 void Lexer::_return_carriage() {
-    _row++;
+    _row = _row + 1;
     _col = 0;
 }
 
 bool Lexer::is_lexing() { return !_end_of_file; }
 
 std::string Lexer::print_token(token_t token) {
+    // <(position):(kind)
     std::string str_rep = "<" + std::to_string(token.position) + ":" + print_token_kind(token.kind);
+    // :(value)
     if (token.value != "") { str_rep += ":" + token.value; }
-    if (token.kind != TOKEN_EOF) { str_rep += ":r" + std::to_string(token.row) + "c" + std::to_string(token.col); }
+    // :r(row)c(column) - TODO: Fix row/column indexing (not a high priority because that's not needed to parse)
+    str_rep += ":r" + std::to_string(token.row) + "c" + std::to_string(token.col);
+    //if (token.kind != TOKEN_EOF) { str_rep += ":r" + std::to_string(token.row) + "c" + std::to_string(token.col); }
+    // >
     str_rep += ">";
+    // Overall format: <(position):(kind):(value):r(row)c(column)>
     return str_rep;
 }
 

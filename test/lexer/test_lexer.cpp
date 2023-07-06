@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <vector>
 
 #include "../../src/lexer.cpp"
@@ -17,6 +18,7 @@ int main (int argc, char* argv[]) {
     Lexer lexer = Lexer();
     string line = string();
     string source_text = string();
+    stringstream source_buffer;
     //vector<token_t> tokens = vector<token_t>();
 
     if (argc != 2) {
@@ -46,10 +48,14 @@ int main (int argc, char* argv[]) {
     token_t token = {TOKEN_EOF, 0, 0, 0, string()};
 
     // Collect source file, line-by-line
-    while (getline(source_file, line)) {
+    /*while (getline(source_file, line)) {
         source_text.append(line + '\n');
-        cout << line;
-    }
+        cout << line << endl;
+    }*/
+
+    // Turn enter file buffer into a string
+    source_buffer << source_file.rdbuf();
+    source_text = source_buffer.str();
 
     // Begin scanning
     lexer.set_text(source_text);

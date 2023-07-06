@@ -4,7 +4,7 @@
 
 /* yup */
 
-/* this one is 
+/* this one
 is split across multiple lines */
 
 /* here's another example
