@@ -29,7 +29,7 @@ public :
     token_t next_token();
     /* Print out contents of a token made by the Lexer */
     static std::string print_token(token_t token);
-    /* Returns the state of the Lexer (whether it is still lexing) */
+    /* Returns the state of the Lexer (whether it is still scanning) */
     bool is_lexing();
 
 private :
@@ -58,6 +58,8 @@ private :
     char _peekn(int n);
     /* Move position over by n */
     void _seekn(int n);
+    /* Called when encountering a new line. Resets column to 0 and increments row. */
+    void _return_carriage();
 
     /* Utility function to check for a given keyword at current position
      * If forming the keyword fails, the function returns a placeholder token. */
@@ -65,10 +67,7 @@ private :
     /* Utility function to check for a given operator at current position
      * If forming the operator fails, the function returns a placeholder token. */
     token_t _form_operator_token(std::string opword);
-    // TODO: token_t _form_type_declaration_token(std::string typeword);
 
-    /* Called when encountering a new line. Resets column to 0 and increments row. */
-    void _return_carriage();
 };
 
 #endif

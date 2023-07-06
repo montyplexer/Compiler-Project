@@ -47,7 +47,7 @@ std::string print_token_kind(token_kind kind) {
 /* A token represents a "word" in our language. 
  * Essentially, a unit of meaning.
  */
-typedef struct token_t {
+/*typedef*/ struct token_t {
     // Kind of token, distinguishable at Lexer phase
     token_kind kind;
     // Overall position in file

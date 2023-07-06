@@ -15,7 +15,7 @@ enum syntax_node_kind {
 
 /* Represents a node in the abstract syntax tree. 
  */
-typedef struct syntax_node_t {
+/*typedef*/ struct syntax_node_t {
     syntax_node_kind kind;
     std::vector<syntax_node_t> children;
     std::string value;

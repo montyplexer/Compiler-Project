@@ -36,8 +36,6 @@ token_t Lexer::next_token() {
 
     /* Placeholder token will be filled with the appropriate kind of token */
     token_t token = { TOKEN_PLACEHOLDER, _position, _row, _col, std::string()};
-    
-    //std::cout << "r" << std::to_string(_row) << "c" << std::to_string(_col) << _text[_position] << "(before)" << std::endl;
 
     /* This language ignores comments and whitespace tokens */
     while (std::isspace(_current()) || _current() == '#' || _text.substr(_position,2) == "/*") {
@@ -75,7 +73,7 @@ token_t Lexer::next_token() {
 
     }    
 
-    //std::cout << "r" << std::to_string(_row) << "c" << std::to_string(_col) << " (after)" << std::endl;
+    // Set row/column to current location (having skipped whitespace)
     token.row = _row; token.col = _col;
 
     /* PUNCTUALS */
@@ -147,8 +145,8 @@ token_t Lexer::next_token() {
         }
     }
 
-    /* Keywords */
-    // TODO: make separate tokens for type declaration (we need to account for pointers and mutability with '*' and '!')
+    /* KEYWORDS */
+    // Specific words that are reserved, and therefore cannot be identifiers.
     std::vector<std::string> keyword_list = { 
         "true", "false", // boolean literals (not being treated like keywords)
         "if", "else", // control flow
@@ -165,7 +163,7 @@ token_t Lexer::next_token() {
         }
     }
 
-    /* Identifiers */
+    /* IDENTIFIERS */
     // REGEX: /(?<!\S)([A-Z]|[a-z]|[_])+([A-Z]|[a-z]|[_]|[0-9])*(?!\S)*/
     if ( std::isalpha(_current()) || _current() == '_' ) {
         int start = _position;
@@ -179,7 +177,7 @@ token_t Lexer::next_token() {
         return token;
     }
 
-    /* Numeral Literals */
+    /* Numeral Literals (INTEGERS and FLOATS) */
     /* There are three cases: 
      * 1. starts with digit and has no period (integer)
      *  - (?<!\S)([0-9])+(?!\S)
@@ -227,7 +225,7 @@ token_t Lexer::next_token() {
         return token;
     }
 
-    /* Character Literals */
+    /* CHARACTER Literals */
     // Found opening quotation
     if (_current() == '\'') {
         // Record current position
@@ -247,7 +245,7 @@ token_t Lexer::next_token() {
         return token;
     }
 
-    /* String Literals */
+    /* STRING Literals */
     // Found opening quotation
     if (_current() == '"') {
         // Record current position
@@ -274,12 +272,27 @@ token_t Lexer::next_token() {
         return token;
     }
 
-    /* Something went wrong! */
+    /* Something went wrong! INVALID */
     token.kind = TOKEN_INVALID;
     token.value = _current();
     _next();
     return token;
- }
+}
+
+bool Lexer::is_lexing() { return !_end_of_file; }
+
+std::string Lexer::print_token(token_t token) {
+    // <(position):(kind)
+    std::string str_rep = "<" + std::to_string(token.position) + ":" + print_token_kind(token.kind);
+    // :(value) [NOTE: not all tokens have this]
+    if (token.value != "") { str_rep += ":" + token.value; }
+    // :r(row)c(column)
+    str_rep += ":r" + std::to_string(token.row) + "c" + std::to_string(token.col);
+    // >
+    str_rep += ">";
+    // Overall format: <(position):(kind):(value):r(row)c(column)>
+    return str_rep;
+}
 
 /* PRIVATE FUNCTIONS */
 
@@ -299,44 +312,18 @@ char Lexer::_peekn(int n) {
 }
 
 void Lexer::_next() { 
-    if ( _current() == '\n' ) { 
-        _return_carriage(); 
-        //std::cout << "current char '" << _text[_position] << "' (if)" << std::endl;
-    }
-    else { 
-        //std::cout << "current char '" << _text[_position] << "' (else)" << std::endl; 
-        _col++; 
-    }
+    if ( _current() == '\n' ) { _return_carriage(); }
+    else { _col++; }
     _position++;
 }
 
 void Lexer::_seekn(int n) { 
-    for (int i = 0; i < n; i++) { _next(); }   
-    //_position += n;
-    /* NOTE: Does not check for newline in between current char and n chars ahead! */
-    //if(_peekn(n) == '\n') { _return_carriage(); }
-    //else { _col += n; }
+    for (int i = 0; i < n; i++) { _next(); } 
 }
 
 void Lexer::_return_carriage() {
-    _row = _row + 1;
+    _row++;
     _col = 0;
-}
-
-bool Lexer::is_lexing() { return !_end_of_file; }
-
-std::string Lexer::print_token(token_t token) {
-    // <(position):(kind)
-    std::string str_rep = "<" + std::to_string(token.position) + ":" + print_token_kind(token.kind);
-    // :(value)
-    if (token.value != "") { str_rep += ":" + token.value; }
-    // :r(row)c(column) - TODO: Fix row/column indexing (not a high priority because that's not needed to parse)
-    str_rep += ":r" + std::to_string(token.row) + "c" + std::to_string(token.col);
-    //if (token.kind != TOKEN_EOF) { str_rep += ":r" + std::to_string(token.row) + "c" + std::to_string(token.col); }
-    // >
-    str_rep += ">";
-    // Overall format: <(position):(kind):(value):r(row)c(column)>
-    return str_rep;
 }
 
 token_t Lexer::_form_keyword_token(std::string keyword) {
@@ -356,14 +343,11 @@ token_t Lexer::_form_keyword_token(std::string keyword) {
 token_t Lexer::_form_operator_token(std::string opword) {
     token_t token = { TOKEN_PLACEHOLDER, _position, _row, _col, std::string() };
     char end_char = _peekn(opword.length());
-    // Check that substring actually matches keyword          //, AND it is followed by whitespace, an alphanumerical, paranthesis or underscore character
-    if (_text.substr(_position,opword.length()) == opword ) { //(std::isalnum(end_char) || std::isspace(end_char) || end_char == '_' || end_char == '(' || end_char == ')' || end_char == 0
+    // Check that substring actually matches operator
+    if (_text.substr(_position,opword.length()) == opword ) { 
         token.kind = TOKEN_OPERATOR;
         token.value = _text.substr(_position,opword.length());
         _seekn(opword.length());
     }
     return token;
 }
-
-
-// TODO: token_t Lexer::_form_type_declaration_token(std::string typeword) {}
