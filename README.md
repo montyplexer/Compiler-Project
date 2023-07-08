@@ -1,6 +1,6 @@
  # Compiler written in C++ for new language
 
-There a multiple phases of a compiler. In this project, I seek to break down the compiler into seperate modules that include:
+There are multiple phases of a compiler. In this project, I seek to break down the compiler into seperate modules that include:
 1. Lexer/Scanner/Tokenizer (Lexical Analysis)
 2. Parser (Syntax And Semantic Analysis)
 3. Intermediate Code Generator 
