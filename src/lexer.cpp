@@ -91,9 +91,9 @@ token_t Lexer::next_token() {
     /* Note the order of the list is important. Longest operators are handled first.
      * There are several types of operators:
      * ARITHMETIC       - Mathematical operators for working with integers and floats.
+     * ASSIGMENT        - Operators for declaration and modification of variables.
      * LOGIC & BITWISE  - Digital logic operators for working with Booleans. When used with integers, performs equivalent bitwise operations.
      * COMPARISON       - Equality and inequality operators for working with any built-in types.
-     * ASSIGMENT        - Operators for declaration and modification of variables.
      * OTHER            - Miscellaneous operators
      */
     std::vector<std::string> operators_list = 

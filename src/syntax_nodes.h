@@ -11,14 +11,20 @@
  * */
 enum syntax_node_kind {
     SNODE_PLACEHOLDER,
+    SNODE_TERMINAL,
+    SNODE_EXPRESSION,
+    SNODE_STATEMENT,
 };
 
 /* Represents a node in the abstract syntax tree. 
  */
-/*typedef*/ struct syntax_node_t {
+struct syntax_node_t {
+    /* Kind of syntax node enum (what this node represents, i.e. binary expression) */
     syntax_node_kind kind;
+    /* Token associated with this syntax node */
+    token_t token;
+    /* A list of children associated with this kind of syntax node */
     std::vector<syntax_node_t> children;
-    std::string value;
 };
 
 #endif

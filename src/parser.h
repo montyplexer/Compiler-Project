@@ -27,6 +27,10 @@ public:
     /* Gives the Parser a new set of tokens with which to attempt to generate a new AST */
     void set_tokens(std::vector<token_t> token_list);
 
+    bool parse();
+
+    void show_parse_tree();
+
 private:
 
     /* PRIVATE FIELDS */
@@ -39,23 +43,41 @@ private:
     int _position;
     /* Is at end of token list? */
     int _end_of_tokens = false;
+    /* Current state of LR parser */
+    parse_state _state = PARSE_INIT;
 
     /* PRIVATE FUNCTIONS */
 
     /* Changes state of Parser back to default, and disconnects any token stream */
     void _reset();
 
+    /* Return either the last token in the token list or TOKEN_EOF if there is no token list. */
+    token_t _last_token();
     /* Returns the token at the current position */
     token_t _current();
     /* Moves position to next the token */
-    void _next();
+    token_t _next();
     /* Looks at next token */
     token_t _peek();
     /* Looks at n token ahead of current token */
     token_t _peekn(int n);
     /* Move position over by n tokens */
-    void _seekn(int n);
+    token_t _seekn(int n);
 
+    syntax_node_t _match(token_kind kind);
+
+
+
+    /* Utility function of show_parse_tree() which recursively prints the children of each node in the tree. */
+    void _rec_print_children(syntax_node_t node, int scope);
+};
+
+
+enum parse_state {
+    PARSE_INIT,
+    PARSE_S1,
+    
+    PARSE_STOP,
 };
 
 #endif
