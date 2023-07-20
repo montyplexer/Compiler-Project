@@ -11,9 +11,28 @@
  * */
 enum syntax_node_kind {
     SNODE_PLACEHOLDER,
-    SNODE_TERMINAL,
-    SNODE_EXPRESSION,
+
+    SNODE_PROGRAM,
     SNODE_STATEMENT,
+    
+    SNODE_DECLARATION,
+    SNODE_DECLARE_VAR,
+    SNODE_DECLARE_FUNC,
+    SNODE_DECLARE_TYPE,
+    SNODE_EXPRESSION,
+    SNODE_PRIMARY_EXPRESSION,
+    SNODE_FUNC_BODY,
+    SNODE_TYPE_BODY,
+    SNODE_CALL,
+    SNODE_EXPRESSION_LIST,
+    SNODE_RETURN,
+
+    SNODE_TERMINAL,
+    SNODE_VAR_ID,
+    SNODE_FUNC_ID,
+    SNODE_TYPE_ID,
+    
+    
 };
 
 /* Represents a node in the abstract syntax tree. 

@@ -43,8 +43,6 @@ private:
     int _position;
     /* Is at end of token list? */
     int _end_of_tokens = false;
-    /* Current state of LR parser */
-    parse_state _state = PARSE_INIT;
 
     /* PRIVATE FUNCTIONS */
 
@@ -66,18 +64,11 @@ private:
 
     syntax_node_t _match(token_kind kind);
 
-
+    /* Returns true if parameter is of a literal kind */
+    bool _is_literal(token_kind kind);
 
     /* Utility function of show_parse_tree() which recursively prints the children of each node in the tree. */
     void _rec_print_children(syntax_node_t node, int scope);
-};
-
-
-enum parse_state {
-    PARSE_INIT,
-    PARSE_S1,
-    
-    PARSE_STOP,
 };
 
 #endif
