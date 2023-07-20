@@ -7,7 +7,7 @@ There are multiple phases of a compiler. In this project, I seek to break down t
 4. Code Optimizer
 5. Target Code Generator
 
-The exact division of the phases is subject to change based on implementation. As of now, the lexer is essentially complete (but may change as the language evolves).
+The exact division of the phases is subject to change based on implementation. As of now, the lexer is essentially complete (but may change as the language evolves). Work is beginning on the parser.
 
 To build the code, download the repo, and from the main folder run `./build.sh`. This will build the project using CMake. Feel free to remove CMake leftovers, like caches, using `./clean.sh`.
 
@@ -20,8 +20,11 @@ __TODO__
     - [x] Generate list of tokens for parser
     - [x] Write unit tests for lexer that tests for correct token generation using 'source code' files
 - [ ] Parser
-    - [ ] Decide on type of parser to implement (most likely bottom-to-top, like SLR)
+    - [x] Decide on type of parser to implement (will start by implementing an LL(k) parser)
+    - [ ] Formalize a simple grammar
     - [ ] Implementation of key syntax node types
+    - [ ] Calculate First and Follow sets
+    - [ ] Implement procedure for each grammar rule
 - [ ] Intermediate code generation
 - [ ] Code optimizer
 - [ ] Target code generation
